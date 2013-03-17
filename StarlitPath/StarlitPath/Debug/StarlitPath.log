@@ -1,0 +1,23 @@
+﻿Build started 17.3.2013 23:15:57.
+     1>Project "C:\Users\Mik3\Documents\GitHub\GProg_Assigment\StarlitPath\StarlitPath\StarlitPath.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\StarlitPath.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Mik3\Documents\GitHub\GProg_Assigment\StarlitPath\Debug\StarlitPath.exe" /NOLOGO /LIBPATH:"C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86" d3d9.lib d3dx9.lib DXUTOpt.lib winmm.lib dxerr.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST:NO /DEBUG /PDB:"C:\Users\Mik3\Documents\GitHub\GProg_Assigment\StarlitPath\Debug\StarlitPath.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Mik3\Documents\GitHub\GProg_Assigment\StarlitPath\Debug\StarlitPath.lib" /MACHINE:X86 Debug\cD3DManager.obj
+         Debug\cD3DXTexture.obj
+         Debug\cD3DXSpriteMgr.obj
+         Debug\cSprite.obj
+         Debug\cXAudio.obj
+         Debug\main.obj
+         StarlitPath.vcxproj -> C:\Users\Mik3\Documents\GitHub\GProg_Assigment\StarlitPath\Debug\StarlitPath.exe
+       FinalizeBuildStatus:
+         Deleting file "Debug\StarlitPath.unsuccessfulbuild".
+         Touching "Debug\StarlitPath.lastbuildstate".
+     1>Done Building Project "C:\Users\Mik3\Documents\GitHub\GProg_Assigment\StarlitPath\StarlitPath\StarlitPath.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.45
