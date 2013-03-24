@@ -68,20 +68,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cCharacter.cpp" />
     <ClCompile Include="cD3DManager.cpp" />
+    <ClCompile Include="cD3DXFont.cpp" />
     <ClCompile Include="cD3DXTexture.cpp" />
     <ClCompile Include="cD3DXSpriteMgr.cpp" />
     <ClCompile Include="cSprite.cpp" />
     <ClCompile Include="cXAudio.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cCharacter.h" />
     <ClInclude Include="cD3DManager.h" />
+    <ClInclude Include="cD3DXFont.h" />
     <ClInclude Include="cD3DXTexture.h" />
     <ClInclude Include="cD3DXSpriteMgr.h" />
     <ClInclude Include="cSprite.h" />
     <ClInclude Include="cXAudio.h" />
     <ClInclude Include="GameConstants.h" />
+    <ClInclude Include="GameResources.h" />
+    <ClInclude Include="Scene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

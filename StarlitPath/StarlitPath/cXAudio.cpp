@@ -96,3 +96,16 @@ void cXAudio::playSound(LPWSTR theFilename, bool pLoop )					// Play sound
 		mSourceVoice->Start(0, XAUDIO2_COMMIT_NOW );
 	}
 }
+/*
+=================
+- Stop current sound.
+=================
+*/
+void cXAudio::stopSound()
+{
+	// Destroy the source voice instance
+	mSourceVoice->Stop();
+	
+
+
+}

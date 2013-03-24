@@ -23,6 +23,16 @@ cD3DXTexture::cD3DXTexture(LPDIRECT3DDEVICE9 pd3dDevice, LPCSTR theFilename)
 	cD3DXTexture::createTexture(pd3dDevice, theFilename);
 	cD3DXTexture::setTextureInfo(theFilename);
 }
+/*
+=================
+- Destructor.
+=================
+*/
+cD3DXTexture::~cD3DXTexture()
+{
+	if(aTexture != NULL)
+		aTexture ->Release();
+}
 
 /*
 =================
@@ -67,6 +77,23 @@ LPDIRECT3DTEXTURE9 cD3DXTexture::getTexture()        // return the texture.
 }
 /*
 =================
+- set the image info based on the image in memory.
+=================
+*/
+bool cD3DXTexture::setTextureInfo(LPCVOID imgInMem)  // set the image info based on the filename supplied.
+{
+	HRESULT hResult;
+	// Get texture info  
+	UINT imgSize = sizeof(imgInMem);
+	hResult = D3DXGetImageInfoFromFileInMemory(imgInMem,imgSize,&aTextureInfo);
+
+	if(FAILED(hResult))
+	{
+		return false;
+	}
+	return true;
+}/*
+=================
 - set the image info based on the filename supplied.
 =================
 */
@@ -91,4 +118,21 @@ D3DXIMAGE_INFO cD3DXTexture::getTextureInfo() 		// return information about the 
 {
 	return cD3DXTexture::aTextureInfo;
 }
-
+/*
+=================
+- Return width of texture.
+=================
+*/
+int cD3DXTexture::getTWidth() 						// Return width of texture;
+{
+	return aTextureInfo.Width;
+}
+/*
+=================
+- Return height of texture.
+=================
+*/
+int cD3DXTexture::getTHeight() 						// Return height of texture;
+{
+	return aTextureInfo.Height;
+}

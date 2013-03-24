@@ -14,20 +14,15 @@
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <stdio.h>
+#include <strsafe.h>
+
+using namespace std;
 
 // This header file contains all the constants & enumarated types for the game
-enum eSuit {CLUBS,DIAMONDS,HEARTS,SPADES};
-enum eType {ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
+
+enum eDirection {LEFT, RIGHT, UP, DOWN};
+enum eState {TITLE,OPTIONS,GAME,PAUSE,GAMEOVER,TRANSITION,SCORE,CREDITS};
 
 
-const std::string strType[14] = {"0","A","2","3","4","5","6","7","8","9","10","J","Q","K"};
-const std::string strSuit[4] = {"C","D","H","S"};
-
-struct CARD{
-	eSuit cSuit;       // Suit card belongs to.
-	eType cType;       // Type of card e.g. face card.
-	short cValue;      // Numeric value of the playing card
-	bool cIsFaceUp;
-	std::string cFilename;
-};
 #endif

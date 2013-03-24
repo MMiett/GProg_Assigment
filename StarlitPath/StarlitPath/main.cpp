@@ -10,6 +10,7 @@ Main entry point for the Card application
 #include "cD3DXSpriteMgr.h"
 #include "cD3DXTexture.h"
 #include "cSprite.h"
+#include "cCharacter.h"
 #include "cXAudio.h"
 
 using namespace std;
@@ -29,8 +30,19 @@ float rotation = 5.0f;
 D3DXVECTOR2 scaling(2.0f,2.0f);
 D3DXMATRIX  matrix;
 
+D3DXVECTOR3 expPos;
 cXAudio gMainTheme;
+cXAudio gEffects;
+RECT clientBounds;
 
+TCHAR szTempOutput[30];
+
+bool gHit = false;
+
+cD3DXTexture* miscTextures[4];
+char* miscTxtres[] = {"Images\\boss_test.png"};
+
+int state = TITLE;
 
 
 /*
@@ -45,18 +57,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	// Check any available messages from the queue
 	switch (message)
 	{
+		case WM_RBUTTONDOWN:
+		{
+			state = GAME;
+		}
+		case WM_LBUTTONDOWN:
+			{
+				POINT mouseXY;
+				mouseXY.x = LOWORD(lParam);
+				mouseXY.y = HIWORD(lParam);
+				expPos = D3DXVECTOR3((float)mouseXY.x,(float)mouseXY.y, 0.0f);
+				
+				
+			}
+
 		case WM_KEYDOWN:
 			{
 				if (wParam == VK_LEFT)
 				{
-					if(rocketTrans.x > 0)
-					rocketTrans.x -= 5.0f;
+				
 					return 0;
 				}
 				if (wParam == VK_RIGHT)
 				{
-					if(rocketTrans.x < 750)
-					rocketTrans.x += 5.0f;
+				
 					return 0;
 				}
 				if(wParam == VK_UP)
@@ -66,7 +90,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 				if(wParam == VK_DOWN)
 				{
-					rocketTrans = rocketTrans *.5;
+					
 					return 0;
 				}
 				return 0;
@@ -150,25 +174,50 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLi
 		return false;
 	if ( !d3dxSRMgr->initD3DXSpriteMgr(d3dMgr->getTheD3DDevice()))
 		return false;
-	gMainTheme.playSound(L"Sounds\\RebelActs-maintheme.wav",true);
-	LPDIRECT3DSURFACE9 aSurface;				// the Direct3D surface
+
+	// Grab the frequency of the high def timer
+	__int64 freq = 0;				// measured in counts per second;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+	float sPC = 1.0f / (float)freq;			// number of seconds per count
+
+	__int64 currentTime = 0;				// current time measured in counts per second;
+	__int64 previousTime = 0;				// previous time measured in counts per second;
+
+	float numFrames   = 0.0f;				// Used to hold the number of frames
+	float timeElapsed = 0.0f;				// cumulative elapsed time
+
+	GetClientRect(wndHandle,&clientBounds);
+
+	float fpsRate = 1.0f/25.0f;
+	
+	LPDIRECT3DSURFACE9 aGameTitleSurface;			// the Direct3D surface
+	
+	LPDIRECT3DSURFACE9 aGameSurface;				// the Direct3D surface
+	
 	LPDIRECT3DSURFACE9 theBackbuffer = NULL;  // This will hold the back buffer
 	
 	// Initial starting position for Rocket
 	D3DXVECTOR3 rocketPos = D3DXVECTOR3(300,300,0);
-	cSprite theRocket(rocketPos,d3dMgr->getTheD3DDevice(),"Images\\boss_test.png");
+	cSprite theRocket;
+	theRocket.setTexture(new cD3DXTexture(d3dMgr->getTheD3DDevice(),"Images\\rocketSprite.png"));
+	theRocket.setSpritePos(rocketPos);
 
-	theRocket.SetTranslation(D3DXVECTOR2(5.0f,0.0f));
-	
+
+
+	gMainTheme.playSound(L"Sounds\\RebelActs-maintheme.wav",true);
 	
 	MSG msg;
 	ZeroMemory( &msg, sizeof( msg ) );
 
 	// Create the background surface
-	aSurface = d3dMgr->getD3DSurfaceFromFile("Images\\Rebel_Acts_Title_Screen.png");
+	aGameTitleSurface = d3dMgr->getD3DSurfaceFromFile("Images\\Rebel_Acts_Title_Screen.png");
+	aGameSurface = d3dMgr->getD3DSurfaceFromFile("Images\\boss_test.png");
+
+	QueryPerformanceCounter((LARGE_INTEGER*)&previousTime);
 
 	while( msg.message!=WM_QUIT )
 	{
+
 		// Check the message queue
 		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE) )
 		{
@@ -177,26 +226,60 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLi
 		}
 		else
 		{
+
 			// Game code goes here
-			rocketPos = D3DXVECTOR3(rocketTrans.x,rocketTrans.y,0);
+			QueryPerformanceCounter((LARGE_INTEGER*)&currentTime);
+			float dt = (currentTime - previousTime)*sPC;
 
-			theRocket.setSpritePos(rocketPos);
+			// Accumulate how much time has passed.
+			timeElapsed += dt;
+			switch(state){
+				case TITLE:
+
+					d3dMgr->beginRender();
+					theBackbuffer = d3dMgr->getTheBackBuffer();
+					d3dMgr->updateTheSurface(aGameTitleSurface, theBackbuffer);
+					d3dMgr->releaseTheBackbuffer(theBackbuffer);
+				
+					d3dxSRMgr->beginDraw();
+					d3dxSRMgr->endDraw();
+				
+					d3dMgr->endRender();
+					OutputDebugString("timeElapsed > fpsRate");
+					timeElapsed = 0.0f;
+
+					break;
+				case GAME:
+					gMainTheme.stopSound();
+					gMainTheme.playSound(L"Sounds\\Jump.wav",true);
+
+					rocketPos = D3DXVECTOR3(rocketTrans.x,rocketTrans.y,0);
+
+					theRocket.setSpritePos(rocketPos);
 			
-			//theRocket.SetTranslation(matrix);
-			//theRocket.SetTranslation(D3DXMatrixTransformation2D(&matrix,NULL,0.0,&scaling,&theRocket.getSpriteCentre(),rotation,&rocketTrans));
-			d3dMgr->beginRender();
-			theBackbuffer = d3dMgr->getTheBackBuffer();
-			d3dMgr->updateTheSurface(aSurface, theBackbuffer);
-			d3dMgr->releaseTheBackbuffer(theBackbuffer);
+			
+					d3dMgr->beginRender();
+					theBackbuffer = d3dMgr->getTheBackBuffer();
+					d3dMgr->updateTheSurface(aGameSurface, theBackbuffer);
+					d3dMgr->releaseTheBackbuffer(theBackbuffer);
 			
 
-			d3dxSRMgr->beginDraw();
-			d3dxSRMgr->drawSprite(theRocket.getTexture(),NULL,NULL,&theRocket.getSpritePos(),0xFFFFFFFF);
-			d3dxSRMgr->endDraw();
-			d3dMgr->endRender();
+					d3dxSRMgr->beginDraw();
+					d3dxSRMgr->drawSprite(theRocket.getTexture(),NULL,NULL,&theRocket.getSpritePos(),0xFFFFFFFF);
+					d3dxSRMgr->endDraw();
+					d3dMgr->endRender();
+					break;
+				case TRANSITION:
+					break;
+				case GAMEOVER:
+					break;
+				default:break;
+			}
+			
+			
 		}
 	}
 	d3dxSRMgr->cleanUp();
-	d3dMgr->clean();
+			d3dMgr->clean();
 	return (int) msg.wParam;
 }
